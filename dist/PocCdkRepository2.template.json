@@ -1,0 +1,112 @@
+{
+  "Resources": {
+    "MyFunctionServiceRole3C357FF2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "PocCdkRepository2/MyFunction/ServiceRole/Resource"
+      }
+    },
+    "MyFunctionSecurityGroup5241BB0E": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Automatic security group for Lambda Function PocCdkRepository2MyFunction75DB7FD3",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": "vpc-0d64b885165faba35"
+      },
+      "Metadata": {
+        "aws:cdk:path": "PocCdkRepository2/MyFunction/SecurityGroup/Resource"
+      }
+    },
+    "MyFunction3BAA72D1": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "exports.handler = function(event, ctx, cb) { console.log(\"Hello\") }"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "MyFunctionServiceRole3C357FF2",
+            "Arn"
+          ]
+        },
+        "Handler": "index.handler",
+        "Runtime": "nodejs12.x",
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "MyFunctionSecurityGroup5241BB0E",
+                "GroupId"
+              ]
+            }
+          ],
+          "SubnetIds": [
+            "subnet-0476acd69215db879",
+            "subnet-0851b1c4e5cbbe12f"
+          ]
+        }
+      },
+      "DependsOn": [
+        "MyFunctionServiceRole3C357FF2"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "PocCdkRepository2/MyFunction/Resource"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Analytics": "v2:deflate64:H4sIAAAAAAAAE1VNywrCMBD8lt6320bEs1DQe/sFcbNC+shKHoqE/Lut0oMwMMM8GIWqPaGqzvoVajJTk0k8Yx6ipgl6DpI8MXTiQvSJInR3t7sFtlGe9XIzGvMlOYpW3FbZdQGrF8y9zPxdrlyA6bAeMCVv4/vqJT227M8opYATwziG5qmOuKKtxmBt7ZOLdmHsf/wBt/RLFsAAAAA="
+      },
+      "Metadata": {
+        "aws:cdk:path": "PocCdkRepository2/CDKMetadata/Default"
+      }
+    }
+  }
+}
